@@ -222,30 +222,19 @@ public class ALU {
 	 */
 	public String fullAdder (char x, char y, char c) {
 		// TODO YOUR CODE HERE.
-		String ans = null; 
-		int n=0;
-		if(x=='1'){
-			n=n+1;
-		}
-		if(y=='1'){
-			n=n+1;
-		}
-		if(c=='1'){
-			n=n+1;
-		}
-		if(n>=2){
-			ans = ans +"1";
+		String ans = "";
+		if(Or(Or(And(x, y), And(y, c)), And(x, c))=='0'){
+			ans = ans+"0";
 		}else{
-			ans = ans +"0";
+			ans = ans+"1";
 		}
-			
 		if(Xor(Xor(x, y), c)=='0'){
 			ans = ans +"0";
 		}else{
 			ans = ans + "1";
 		}
 		
-		return null;
+		return ans;
 	}
 	
 	/**
