@@ -28,21 +28,29 @@ public class ALU {
 			}
 		return ans;
 	}
-	//与门
-	public String And (String s1,String s2){
-		if((Integer.parseInt(s1)&Integer.parseInt(s2))==0){
-			return "0";
+	//char非门
+	public char charNot(char ch){
+		if(ch=='0'){
+			return '1';
 		}else{
-			return "1";
+			return '0';
+		}
+	}
+	//与门
+	public char And (char s1,char s2){
+		if((Integer.parseInt(""+s1)&Integer.parseInt(""+s2))==0){
+			return '0';
+		}else{
+			return '1';
 		}
 		
 	}
 	//或门
-	public String Or (String s1,String s2){
-		if((Integer.parseInt(s1)|Integer.parseInt(s2))==0){
-			return "0";
+	public char Or (char s1,char s2){
+		if((Integer.parseInt(""+s1)|Integer.parseInt(""+s2))==0){
+			return '0';
 		}else{
-			return "1";
+			return '1';
 		}
 	}
 	//异或门,一位进行异或
