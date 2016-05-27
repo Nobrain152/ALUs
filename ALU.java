@@ -1,6 +1,9 @@
 package ALUs;
 
+import java.sql.SQLNonTransientConnectionException;
+
 import javax.print.attribute.standard.RequestingUserName;
+import javax.swing.tree.AbstractLayoutCache;
 
 import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 
@@ -11,10 +14,10 @@ import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
  */
 
 public class ALU {
-	
+	//创建全局的ALU对象
+	public static ALU aAlu = new ALU(); 
 	public static void main(String[] args) {
-		ALU sAlu = new ALU();
-		System.out.println(sAlu.integerRepresentation("-3", 4));
+		System.out.println(aAlu.integerRepresentation("-3", 4));
 		
 	}
 	
@@ -71,7 +74,7 @@ public class ALU {
 	 * @param length 二进制补码表示的长度
 	 * @return number的二进制补码表示，长度为length
 	 */
-	//负数的问题未解决
+	//未测试
  	public String integerRepresentation (String number, int length) {
 		// TODO YOUR CODE HERE.
 		String ans = "";
@@ -118,8 +121,8 @@ public class ALU {
 	 */
 	public String floatRepresentation (String number, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
-		ALU aAlu = new ALU();
 		String ans = new String();
+		int index = 0;
 		//符号位
 		if(ans.charAt(0)=='-'){
 			ans = ans+'1';
@@ -130,7 +133,7 @@ public class ALU {
 		//底数
 		String[] spare = new String[2];
 		spare = number.split(".");
-		String overOne = null;
+		String overOne = Integer.toBinaryString(Integer.parseInt(spare[0]));
 		//小于1
 		String lowerOne = null;
 		
