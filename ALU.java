@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+package ALUs;
 
 import javax.print.attribute.standard.RequestingUserName;
 
@@ -11,10 +11,10 @@ import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
  */
 
 public class ALU {
-	ALU sAlu = new ALU();
+	
 	public static void main(String[] args) {
-		
-		System.out.println(Integer.toBinaryString(1));
+		ALU sAlu = new ALU();
+		System.out.println(sAlu.integerRepresentation("-3", 4));
 		
 	}
 	
@@ -75,9 +75,27 @@ public class ALU {
  	public String integerRepresentation (String number, int length) {
 		// TODO YOUR CODE HERE.
 		String ans = "";
-		
+		String negativeAns = "";
 		if(number.charAt(0)=='-'){
+			String negative = number.substring(1);
+			String text = Integer.toBinaryString(Integer.parseInt(negative));
 			
+			for(int i=0;i<(length-text.length());i++){
+				ans = ans + "0";
+			}
+			 ans = ans + Integer.toBinaryString(Integer.parseInt(negative));
+			
+			 for(int i=length-1;i>=0;i--){
+				 if(ans.charAt(i)=='1'){
+					 for(int m =0;m<i;m++){
+						 negativeAns=negativeAns+charNot(ans.charAt(m));
+					 }
+					 negativeAns=negativeAns+ans.substring(i);
+					 break;
+				 }
+					
+			 }
+			 ans = negativeAns;
 		}else{
 			String text = Integer.toBinaryString(Integer.parseInt(number));
 			for(int i=0;i<(length-text.length());i++){
