@@ -2,6 +2,7 @@ package ALUs;
 
 import java.sql.SQLNonTransientConnectionException;
 
+import javax.naming.NamingEnumeration;
 import javax.print.attribute.standard.RequestingUserName;
 import javax.swing.tree.AbstractLayoutCache;
 
@@ -17,7 +18,7 @@ public class ALU {
 	//创建全局的ALU对象
 	public static ALU aAlu = new ALU(); 
 	public static void main(String[] args) {
-		System.out.println(aAlu.integerRepresentation("-3", 4));
+		System.out.println(aAlu.floatRepresentation("0.5", 2, 4));
 		
 	}
 	
@@ -119,10 +120,11 @@ public class ALU {
 	 * @param sLength 尾数的长度，取值大于等于 4
 	 * @return number的二进制表示，长度为 1+eLength+sLength。从左向右，依次为符号、指数（移码表示）、尾数（首位隐藏）
 	 */
+ 	//特殊情况未表示，一点都没调试过
 	public String floatRepresentation (String number, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
 		String ans = new String();
-		int index = 0;
+		String index = null;
 		//符号位
 		if(ans.charAt(0)=='-'){
 			ans = ans+'1';
@@ -136,8 +138,51 @@ public class ALU {
 		String overOne = Integer.toBinaryString(Integer.parseInt(spare[0]));
 		//小于1
 		String lowerOne = null;
+		int max = sLength-overOne.length();
+		int lower = Integer.parseInt(spare[2]);
+		//小数部分
+		for(int i =0;i<max;i++){
+			if(lower==0){
+				break;
+			}
+			lower=lower*2;
+			if(lower>=Math.pow(10, (double)(spare[2].length()+1))){
+				lowerOne=lowerOne+"1";
+				lower=(int) (lower-Math.pow(10, (double)(spare[2].length()+1)));
+			}else{
+				lowerOne=lowerOne+"0";
+			}
+		}
+		//sNumber 是最终的底数
+		String sNumber = overOne+lowerOne;
+		for(int i =sNumber.length();i<sLength;i++){
+			sNumber=sNumber+"0";
+		}
 		
-		return null;
+		//指数
+		int trueIndex = 0;
+		if(spare[0].equals("0")){
+			for(int i=0;i<lowerOne.length();i++){
+				if(lowerOne.charAt(i)=='0'){
+					trueIndex=trueIndex-1;
+				}else{
+					break;
+				}
+				}
+		}else{
+			trueIndex=overOne.length()-1;
+			for(int i =0;i<overOne.length();i++){
+				if(overOne.charAt(i)=='0'){
+					trueIndex=trueIndex-1;
+				}else{
+					break;
+				}
+			}
+		}
+		trueIndex = (int) (trueIndex+Math.pow(2, (double)(eLength-1))-1);
+		index= aAlu.integerRepresentation(""+trueIndex, eLength);
+		ans  = ans+index+sNumber;
+		return ans;
 	}
 	
 	/**
