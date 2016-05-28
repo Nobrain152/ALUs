@@ -18,7 +18,7 @@ public class ALU {
 	//创建全局的ALU对象
 	public static ALU aAlu = new ALU(); 
 	public static void main(String[] args) {
-		System.out.println(aAlu.floatRepresentation("0.5", 2, 4));
+		System.out.println(aAlu.floatRepresentation("1.5", 2, 4));
 		
 	}
 	
@@ -123,32 +123,32 @@ public class ALU {
  	//特殊情况未表示，一点都没调试过
 	public String floatRepresentation (String number, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
-		String ans = new String();
-		String index = null;
+		String ans = "";
+		String index = "";
 		//符号位
-		if(ans.charAt(0)=='-'){
-			ans = ans+'1';
+		if(number.charAt(0)=='-'){
+			ans = ans+"1";
 			number = number.replace("-","");
 		}else{
-			ans = ans+'0';
+			ans = ans+"0";
 		}
 		//底数
 		String[] spare = new String[2];
-		spare = number.split(".");
+		spare = number.split("\\.");
 		String overOne = Integer.toBinaryString(Integer.parseInt(spare[0]));
 		//小于1
 		String lowerOne = null;
 		int max = sLength-overOne.length();
-		int lower = Integer.parseInt(spare[2]);
+		int lower = Integer.parseInt(spare[1]);
 		//小数部分
 		for(int i =0;i<max;i++){
 			if(lower==0){
 				break;
 			}
 			lower=lower*2;
-			if(lower>=Math.pow(10, (double)(spare[2].length()+1))){
+			if(lower>=Math.pow(10, (double)(spare[1].length()+1))){
 				lowerOne=lowerOne+"1";
-				lower=(int) (lower-Math.pow(10, (double)(spare[2].length()+1)));
+				lower=(int) (lower-Math.pow(10, (double)(spare[1].length()+1)));
 			}else{
 				lowerOne=lowerOne+"0";
 			}
@@ -227,6 +227,7 @@ public class ALU {
 	 * @param operand 二进制表示的操作数
 	 * @return operand按位取反的结果
 	 */
+	//结束
 	public String negation (String operand) {
 		// TODO YOUR CODE HERE.
 		char[] Number = new char[operand.length()];
@@ -251,7 +252,10 @@ public class ALU {
 	 */
 	public String leftShift (String operand, int n) {
 		// TODO YOUR CODE HERE.
-		return null;
+		for(int i=0;i<n;i++){
+			operand=operand+"0";
+		}
+		return operand;
 	}
 	
 	/**
@@ -263,7 +267,8 @@ public class ALU {
 	 */
 	public String logRightShift (String operand, int n) {
 		// TODO YOUR CODE HERE.
-		return null;
+		operand="0"+operand;
+		return operand;
 	}
 	
 	/**
@@ -275,7 +280,12 @@ public class ALU {
 	 */
 	public String ariRightShift (String operand, int n) {
 		// TODO YOUR CODE HERE.
-		return null;
+		if(operand.charAt(0)=='0'){
+			operand="0"+operand;
+		}else{
+			operand="1"+operand;
+		}
+		return operand;
 	}
 	
 	/**
@@ -311,9 +321,20 @@ public class ALU {
 	 * @param c 低位对当前位的进位，取0或1
 	 * @return 长度为5的字符串表示的计算结果，其中第1位是最高位进位，后4位是相加结果，其中进位不可以由循环获得
 	 */
+	//未测试
 	public String claAdder (String operand1, String operand2, char c) {
 		// TODO YOUR CODE HERE.
-		return null;
+		String[] anStrings= new String[4];
+		anStrings[3]=aAlu.fullAdder(operand1.charAt(3), operand2.charAt(3), c);
+		for(int i=2;i>=0;i--){
+			anStrings[i]=aAlu.fullAdder(operand1.charAt(i), operand2.charAt(i), anStrings[i+1].charAt(0));
+		}
+		String ans="";
+		ans=ans+anStrings[0].charAt(0);
+		for(int i=0;i<4;i++){
+			ans=ans+anStrings[i].charAt(1);
+		}
+		return ans;
 	}
 	
 	/**
