@@ -17,19 +17,18 @@ import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 public class ALU {
 	//创建全局的ALU对象
 	public static ALU aAlu = new ALU(); 
-	public static void main(String[] args) {
-		System.out.println(aAlu.floatRepresentation("1.5", 2, 4));
-		
-	}
+	
 	
 	//非门,通过
 	public String Not (String s){
-		String ans = null;
-			if(s.equals("0")){
-				ans = "1";
+		String ans = "";
+		for(int i=0;i<s.length();i++){
+			if(s.charAt(i)=='0'){
+				ans=ans+"1";
 			}else{
-				ans = "0";
+				ans=ans+"0";
 			}
+		}
 		return ans;
 	}
 	//char非门
@@ -324,16 +323,27 @@ public class ALU {
 	//未测试
 	public String claAdder (String operand1, String operand2, char c) {
 		// TODO YOUR CODE HERE.
-		String[] anStrings= new String[4];
-		anStrings[3]=aAlu.fullAdder(operand1.charAt(3), operand2.charAt(3), c);
-		for(int i=2;i>=0;i--){
-			anStrings[i]=aAlu.fullAdder(operand1.charAt(i), operand2.charAt(i), anStrings[i+1].charAt(0));
-		}
+		//相乘是And，相加是Or
 		String ans="";
-		ans=ans+anStrings[0].charAt(0);
-		for(int i=0;i<4;i++){
-			ans=ans+anStrings[i].charAt(1);
+		char x1y1=And(operand1.charAt(3), operand2.charAt(3));
+		char x2y2=And(operand1.charAt(2), operand2.charAt(2));
+		char x3y3=And(operand1.charAt(1), operand2.charAt(1));
+		char x4y4=And(operand1.charAt(0), operand2.charAt(0));
+		char x1Andy1=Or(operand1.charAt(3), operand2.charAt(3));
+		char x2Andy2=Or(operand1.charAt(2), operand2.charAt(2));
+		char x3Andy3=Or(operand1.charAt(1), operand2.charAt(1));
+		char x4Andy4=Or(operand1.charAt(0), operand2.charAt(0));
+		
+		char c1=Or(x1y1, And(x1Andy1, c));
+		char c2=Or(Or(x2y2, And(x2Andy2, x1y1)), And(And(x2Andy2, x1Andy1), c));
+		char c3=Or(Or(And(x1y1, And(x3Andy3, x2Andy2)), Or(x3y3, And(x2Andy2, x1y1))), And(And(And(x3Andy3, x2Andy2), x1Andy1), c));
+		char c4=Or(And(And(And(x4Andy4, x3Andy3), x2Andy2), And(x1Andy1, c)), Or(Or(Or(x4y4, And(x3y3, x4Andy4)), And(And(x4Andy4, x3Andy3), x2y2)), And(And(x4Andy4, x3Andy3), And(x2Andy2, x1y1))));
+		char[] cs = {c1,c2,c3,c4};
+		ans=ans+c4;
+		for(int i=0;i<3;i++){
+			ans=ans+fullAdder(operand1.charAt(i), operand2.charAt(i), cs[3-i]).charAt(1);
 		}
+		ans=ans+fullAdder(operand1.charAt(3),operand2.charAt(3), c).charAt(1);
 		return ans;
 	}
 	
@@ -350,7 +360,22 @@ public class ALU {
 	 */
 	public String oneAdder (String operand) {
 		// TODO YOUR CODE HERE.
-		return null;
+		String anString="";
+		if(operand.charAt(operand.length()-1)=='0'){
+			anString="0"+operand.substring(0, operand.length()-1)+"1";
+		}else{
+			int m=0;
+			for(int i=0;i<operand.length();i++){
+				if(operand.charAt(operand.length()-1-i)=='0'){
+					anString="0"+operand.substring(0,operand.length()-1-i)+Not(operand.substring(operand.length()-1-i));
+					break;
+				}
+				if(i==(operand.length()-1)){
+					anString="1"+Not(operand);
+				}
+			}
+		}
+		return anString;
 	}
 	
 	/**
@@ -364,7 +389,32 @@ public class ALU {
 	 */
 	public String adder (String operand1, String operand2, char c, int length) {
 		// TODO YOUR CODE HERE.
-				return null;
+		String anString="";
+		if(operand1.charAt(0)=='0'){
+			for(int i=0;i<(length-operand1.length());i++){
+				operand1="0"+operand1;
+			}
+		}else{
+			for(int i=0;i<(length-operand1.length());i++){
+				operand1="1"+operand1;
+			}
+		}
+		if(operand2.charAt(0)=='0'){
+			for(int i=0;i<(length-operand2.length());i++){
+				operand2="0"+operand2;
+			}
+		}else{
+			for(int i=0;i<(length-operand2.length());i++){
+				operand2="1"+operand2;
+			}
+		}
+		for(int i=4;i<=length;i=i+4){
+			if(i==4){
+				anString=anString+aAlu.claAdder(operand1.substring(length-i), operand2.substring(length-i), c).substring(1);
+			}
+			
+		}
+		return null;
 	}
 	
 	/**
