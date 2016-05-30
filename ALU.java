@@ -204,6 +204,7 @@ public class ALU {
 	 */
 	public String integerTrueValue (String operand) {
 		// TODO YOUR CODE HERE.
+		
 		return null;
 	}
 	
@@ -441,7 +442,8 @@ public class ALU {
 	 */
 	public String integerAddition (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-		return null;
+		
+		return aAlu.adder(operand1, operand2, '0', length);
 	}
 	
 	/**
@@ -454,7 +456,9 @@ public class ALU {
 	 */
 	public String integerSubtraction (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-		return null;
+		String n2=Not(operand2);
+		n2=aAlu.oneAdder(n2);
+		return aAlu.adder(operand1, n2, '0', length);
 	}
 	
 	/**
@@ -467,7 +471,16 @@ public class ALU {
 	 */
 	public String integerMultiplication (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-		return null;
+		String n1=operand1;
+		char c='0';
+		for (int i = 0; i <Integer.parseInt(operand2,2); i++) {
+			operand1=aAlu.adder(operand1, n1, '0', length).substring(1);
+			if(aAlu.adder(operand1, n1, '0', length).charAt(0)=='1'){
+				c='1';
+			}
+		}
+		operand1=c+operand1;
+		return operand1;
 	}
 	
 	/**
@@ -480,6 +493,7 @@ public class ALU {
 	 */
 	public String integerDivision (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
+		
 		return null;
 	}
 	
