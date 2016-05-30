@@ -204,8 +204,23 @@ public class ALU {
 	 */
 	public String integerTrueValue (String operand) {
 		// TODO YOUR CODE HERE.
-		
-		return null;
+		double ans=0;
+		String anString="";
+		String op=operand;
+		if(operand.charAt(0)=='0'){
+			for(double i=0;i<operand.length();i++){
+				ans=ans+Math.pow(2, i)*Integer.parseInt(""+operand.charAt((int)(operand.length()-i-1)));
+			}
+		}else{
+			op=aAlu.integerSubtraction(operand, "1", operand.length());
+			op=aAlu.Not(op);
+			for(double i=0;i<operand.length();i++){
+				ans=ans+Math.pow(2, i)*Integer.parseInt(""+op.charAt((int)(op.length()-i-1)));
+			}
+			anString=anString+"-";
+		}
+		anString=anString+(int)ans;
+		return anString;
 	}
 	
 	/**
@@ -366,7 +381,7 @@ public class ALU {
 		if(operand.charAt(operand.length()-1)=='0'){
 			anString="0"+operand.substring(0, operand.length()-1)+"1";
 		}else{
-			int m=0;
+			
 			for(int i=0;i<operand.length();i++){
 				if(operand.charAt(operand.length()-1-i)=='0'){
 					anString="0"+operand.substring(0,operand.length()-1-i)+Not(operand.substring(operand.length()-1-i));
@@ -456,9 +471,21 @@ public class ALU {
 	 */
 	public String integerSubtraction (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
+		
+		String ans="";
 		String n2=Not(operand2);
-		n2=aAlu.oneAdder(n2);
-		return aAlu.adder(operand1, n2, '0', length);
+		n2=aAlu.oneAdder(n2).substring(1);
+		
+		ans=aAlu.adder(operand1,n2,'0',length).substring(1);
+		
+		char sn=aAlu.adder(operand1,n2,'0',length).charAt(1);
+		if(Or(And(And(operand1.charAt(0), n2.charAt(0)), charNot(sn)), And(And(charNot(operand1.charAt(0)), charNot(n2.charAt(0))), sn))=='1'){
+			ans="1"+ans;
+		}else{
+			ans="0"+ans;
+		}
+		return ans;
+		
 	}
 	
 	/**
