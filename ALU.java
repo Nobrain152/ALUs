@@ -341,9 +341,10 @@ public class ALU {
 		char[] cs = {c1,c2,c3,c4};
 		ans=ans+c4;
 		for(int i=0;i<3;i++){
-			ans=ans+fullAdder(operand1.charAt(i), operand2.charAt(i), cs[3-i]).charAt(1);
+			ans=ans+fullAdder(operand1.charAt(i), operand2.charAt(i), cs[2-i]).charAt(1);
 		}
 		ans=ans+fullAdder(operand1.charAt(3),operand2.charAt(3), c).charAt(1);
+		
 		return ans;
 	}
 	
@@ -390,31 +391,44 @@ public class ALU {
 	public String adder (String operand1, String operand2, char c, int length) {
 		// TODO YOUR CODE HERE.
 		String anString="";
+		String n1=operand1,n2=operand2;
+		//进行补位
 		if(operand1.charAt(0)=='0'){
-			for(int i=0;i<(length-operand1.length());i++){
+			for(int i=0;i<(length-n1.length());i++){
 				operand1="0"+operand1;
 			}
 		}else{
-			for(int i=0;i<(length-operand1.length());i++){
+			for(int i=0;i<(length-n1.length());i++){
 				operand1="1"+operand1;
 			}
 		}
 		if(operand2.charAt(0)=='0'){
-			for(int i=0;i<(length-operand2.length());i++){
+			for(int i=0;i<(length-n2.length());i++){
 				operand2="0"+operand2;
 			}
 		}else{
-			for(int i=0;i<(length-operand2.length());i++){
+			for(int i=0;i<(length-n2.length());i++){
 				operand2="1"+operand2;
 			}
 		}
+		
+		//从最后4位开始加，不断往前挪，，进位由claAdder得到
+		char cs=c;
 		for(int i=4;i<=length;i=i+4){
 			if(i==4){
-				anString=anString+aAlu.claAdder(operand1.substring(length-i), operand2.substring(length-i), c).substring(1);
+				anString=aAlu.claAdder(operand1.substring(length-i,length-i+4), operand2.substring(length-i,length-i+4), c).substring(1)+anString;
+				
+			}else{
+				anString=aAlu.claAdder(operand1.substring(length-i, length-i+4), operand2.substring(length-i, length-i+4), cs).substring(1)+anString;
 			}
-			
+			cs=aAlu.claAdder(operand1.substring(length-i,length-i+4), operand2.substring(length-i,length-i+4), cs).charAt(0);
 		}
-		return null;
+		if(cs=='1'){
+			anString="1"+anString;
+		}else{
+			anString="0"+anString;
+		}
+		return anString;
 	}
 	
 	/**
