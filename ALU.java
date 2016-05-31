@@ -204,6 +204,7 @@ public class ALU {
 	 */
 	public String integerTrueValue (String operand) {
 		// TODO YOUR CODE HERE.
+<<<<<<< HEAD
 		double ans=0;
 		String anString="";
 		String op=operand;
@@ -221,6 +222,9 @@ public class ALU {
 		}
 		anString=anString+(int)ans;
 		return anString;
+=======
+		return null;
+>>>>>>> origin/master
 	}
 	
 	/**
@@ -458,8 +462,7 @@ public class ALU {
 	 */
 	public String integerAddition (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-		
-		return aAlu.adder(operand1, operand2, '0', length);
+		return null;
 	}
 	
 	/**
@@ -472,6 +475,7 @@ public class ALU {
 	 */
 	public String integerSubtraction (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
+<<<<<<< HEAD
 		
 		String ans="";
 		String n2=Not(operand2);
@@ -487,6 +491,9 @@ public class ALU {
 		}
 		return ans;
 		
+=======
+		return null;
+>>>>>>> origin/master
 	}
 	
 	/**
@@ -500,11 +507,14 @@ public class ALU {
 	//oprand1µ±y£¬operand2µ±x
 	public String integerMultiplication (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
+<<<<<<< HEAD
 		String n1=operand1+"0",n2=operand2,ans="";
 		for(int i=0;i<n1.length();i++){
 			
 			ans=(2^-1)*(ans+operand2*(n1.charAt(operand1.length()-i)-n1.charAt(operand1.length()-i-1)));
 		}
+=======
+>>>>>>> origin/master
 		return null;
 	}
 	
@@ -518,7 +528,6 @@ public class ALU {
 	 */
 	public String integerDivision (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-		
 		return null;
 	}
 	
