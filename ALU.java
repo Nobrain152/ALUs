@@ -233,6 +233,7 @@ public class ALU {
 	 */
 	public String floatTrueValue (String operand, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
+		
 		return null;
 	}
 	
@@ -496,18 +497,15 @@ public class ALU {
 	 * @param length 存放操作数的寄存器的长度，为4的倍数。length不小于操作数的长度，当某个操作数的长度小于length时，需要在高位补符号位
 	 * @return 长度为length+1的字符串表示的相乘结果，其中第1位指示是否溢出（溢出为1，否则为0），后length位是相乘结果
 	 */
+	//oprand1当y，operand2当x
 	public String integerMultiplication (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-		String n1=operand1;
-		char c='0';
-		for (int i = 0; i <Integer.parseInt(operand2,2); i++) {
-			operand1=aAlu.adder(operand1, n1, '0', length).substring(1);
-			if(aAlu.adder(operand1, n1, '0', length).charAt(0)=='1'){
-				c='1';
-			}
+		String n1=operand1+"0",n2=operand2,ans="";
+		for(int i=0;i<n1.length();i++){
+			
+			ans=(2^-1)*(ans+operand2*(n1.charAt(operand1.length()-i)-n1.charAt(operand1.length()-i-1)));
 		}
-		operand1=c+operand1;
-		return operand1;
+		return null;
 	}
 	
 	/**
