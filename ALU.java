@@ -64,7 +64,16 @@ public class ALU {
 			return '1';
 		}
 	}
-	
+	//一位进行相减
+	public char charSub(char op1,char op2) {
+		if(op1==op2){
+			return '0';
+		}else if(op1=='1'&&op2=='0'){
+			return '1';
+		}else{
+			return '2';
+		}
+	}
 	
 	
 	/**
@@ -204,7 +213,7 @@ public class ALU {
 	 */
 	public String integerTrueValue (String operand) {
 		// TODO YOUR CODE HERE.
-<<<<<<< HEAD
+
 		double ans=0;
 		String anString="";
 		String op=operand;
@@ -222,9 +231,8 @@ public class ALU {
 		}
 		anString=anString+(int)ans;
 		return anString;
-=======
-		return null;
->>>>>>> origin/master
+
+		
 	}
 	
 	/**
@@ -273,6 +281,7 @@ public class ALU {
 	public String leftShift (String operand, int n) {
 		// TODO YOUR CODE HERE.
 		for(int i=0;i<n;i++){
+			operand=operand.substring(1);
 			operand=operand+"0";
 		}
 		return operand;
@@ -287,7 +296,11 @@ public class ALU {
 	 */
 	public String logRightShift (String operand, int n) {
 		// TODO YOUR CODE HERE.
-		operand="0"+operand;
+		for(int i=0;i<n;i++){
+			operand=operand.substring(0, operand.length()-1);
+			operand="0"+operand;
+		}
+		
 		return operand;
 	}
 	
@@ -300,11 +313,15 @@ public class ALU {
 	 */
 	public String ariRightShift (String operand, int n) {
 		// TODO YOUR CODE HERE.
-		if(operand.charAt(0)=='0'){
-			operand="0"+operand;
-		}else{
-			operand="1"+operand;
+		for(int i=0;i<n;i++){
+			operand=operand.substring(0, operand.length()-1);
+			if(operand.charAt(0)=='0'){
+				operand="0"+operand;
+			}else{
+				operand="1"+operand;
+			}
 		}
+		
 		return operand;
 	}
 	
@@ -357,7 +374,7 @@ public class ALU {
 		
 		char c1=Or(x1y1, And(x1Andy1, c));
 		char c2=Or(Or(x2y2, And(x2Andy2, x1y1)), And(And(x2Andy2, x1Andy1), c));
-		char c3=Or(Or(And(x1y1, And(x3Andy3, x2Andy2)), Or(x3y3, And(x2Andy2, x1y1))), And(And(And(x3Andy3, x2Andy2), x1Andy1), c));
+		char c3=Or(Or(And(x1y1, And(x3Andy3, x2Andy2)), Or(x3y3, And(x3Andy3, x2y2))), And(And(And(x3Andy3, x2Andy2), x1Andy1), c));
 		char c4=Or(And(And(And(x4Andy4, x3Andy3), x2Andy2), And(x1Andy1, c)), Or(Or(Or(x4y4, And(x3y3, x4Andy4)), And(And(x4Andy4, x3Andy3), x2y2)), And(And(x4Andy4, x3Andy3), And(x2Andy2, x1y1))));
 		char[] cs = {c1,c2,c3,c4};
 		ans=ans+c4;
@@ -475,7 +492,7 @@ public class ALU {
 	 */
 	public String integerSubtraction (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-<<<<<<< HEAD
+
 		
 		String ans="";
 		String n2=Not(operand2);
@@ -491,9 +508,9 @@ public class ALU {
 		}
 		return ans;
 		
-=======
-		return null;
->>>>>>> origin/master
+
+		
+
 	}
 	
 	/**
@@ -505,17 +522,49 @@ public class ALU {
 	 * @return 长度为length+1的字符串表示的相乘结果，其中第1位指示是否溢出（溢出为1，否则为0），后length位是相乘结果
 	 */
 	//oprand1当y，operand2当x
+	//length 是operand1的长度的两倍
 	public String integerMultiplication (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-<<<<<<< HEAD
-		String n1=operand1+"0",n2=operand2,ans="";
-		for(int i=0;i<n1.length();i++){
-			
-			ans=(2^-1)*(ans+operand2*(n1.charAt(operand1.length()-i)-n1.charAt(operand1.length()-i-1)));
+		//在前面补位
+		//n1,n2是补全符号位之后的op1.op2
+		String n1=operand1,n2=operand2,ans=operand1,n2s=oneAdder(Not(operand2)).substring(1);
+		//ans长度应该是寄存器长度
+		
+		char sub;
+		for(int i=operand1.length();i<length;i++){
+			if(operand1.charAt(0)=='0'){
+				n1="0"+n1;
+			}else{
+				n1="1"+n1;
+			}
 		}
-=======
->>>>>>> origin/master
-		return null;
+		
+		for(int i=operand2.length();i<length;i++){
+			n2=n2+'0';
+			n2s=n2s+'0';
+		}
+		for (int i = operand1.length(); i < length; i++) {
+			ans="0"+ans;
+		}
+		n1=n1+'0';
+		
+		
+		
+		for(int i=0;i<operand1.length();i++){
+			//Y0-Y1
+			sub = charSub(n1.charAt(n1.length()-1-i),n1.charAt(n1.length()-2-i));
+			if(sub=='1'){
+				ans = adder(ans, n2, '0', length).substring(1);
+			}else if(sub=='2'){
+				ans = integerSubtraction(ans, n2, length).substring(1);
+			}
+			ans = aAlu.ariRightShift(ans, 1);
+			//补符号位
+			
+			//ans=(2^-1)(左移)*(ans+operand2*(n1.charAt(operand1.length()-i)-n1.charAt(operand1.length()-i-1)));
+		}
+
+		return ans;
 	}
 	
 	/**

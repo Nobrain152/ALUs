@@ -3,12 +3,15 @@ package ALUs;
 public class main {
 	public static void main(String[] args) {
 		ALU aAlu=new ALU();
-<<<<<<< HEAD
+
+		//System.out.println(aAlu.adder("00111010", "10010000", '0', 8));
+		//System.out.println(aAlu.claAdder("0011", "1001", '0'));
+		//System.out.println(aAlu.integerTrueValue("1001"));
+		//System.out.println(aAlu.leftShift("00111", 2));
+		//System.out.println(aAlu.ariRightShift("00101", 2));
+		System.out.println(aAlu.integerMultiplication("1010", "1001", 8));
 		//System.out.println(aAlu.adder("1011", "1000", '0', 8));
-		System.out.println(aAlu.integerTrueValue("1001"));
-=======
-		System.out.println(aAlu.adder("1011", "1000", '0', 8));
->>>>>>> origin/master
-		//10011
+
+		
 	}
 }
