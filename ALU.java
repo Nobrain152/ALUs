@@ -479,7 +479,8 @@ public class ALU {
 	 */
 	public String integerAddition (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-		return null;
+		
+		return adder(operand1, operand2, '0', length);
 	}
 	
 	/**
@@ -563,6 +564,8 @@ public class ALU {
 			
 			//ans=(2^-1)(左移)*(ans+operand2*(n1.charAt(operand1.length()-i)-n1.charAt(operand1.length()-i-1)));
 		}
+		
+		//溢出的一位没有考虑
 
 		return ans;
 	}
@@ -577,6 +580,7 @@ public class ALU {
 	 */
 	public String integerDivision (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
+		
 		return null;
 	}
 	
