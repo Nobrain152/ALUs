@@ -10,7 +10,7 @@ public class main {
 		//System.out.println(aAlu.leftShift("00111", 2));
 		//System.out.println(aAlu.ariRightShift("00101", 2));
 		//System.out.println(aAlu.integerMultiplication("1010", "1001",4));
-		System.out.println(aAlu.floatRepresentation("1.5", 4, 4));
+		System.out.println(aAlu.floatRepresentation("1.8125", 4, 8));
 		//System.out.println(aAlu.makeFull("0010", 8));
 		//System.out.println(aAlu.adder("1011", "1000", '0', 8));
 

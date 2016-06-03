@@ -170,16 +170,19 @@ public class ALU {
 			lower=lower*2;
 			if(lower>=Math.pow(10, (double)(spare[1].length()))){
 				lowerOne=lowerOne+"1";
-				lower=(int) (lower-Math.pow(10, (double)(spare[1].length()+1)));
+				lower=(int) (lower-Math.pow(10, (double)(spare[1].length())));
 			}else{
 				lowerOne=lowerOne+"0";
 			}
+			
 		}
-		//sNumber 是最终的底数
-		String sNumber = (overOne+lowerOne).substring(1);
+		//sNumber 是最终的实数部分
+		String sNumber = (overOne+lowerOne);
 		for(int i =sNumber.length();i<sLength;i++){
 			sNumber=sNumber+"0";
 		}
+		
+		String ansSNumber=sNumber+"0";
 		
 		//指数
 		int trueIndex = 0;
@@ -188,22 +191,18 @@ public class ALU {
 				if(lowerOne.charAt(i)=='0'){
 					trueIndex=trueIndex-1;
 				}else{
+					ansSNumber=ansSNumber.substring(i+1);
 					break;
 				}
 				}
 		}else{
 			trueIndex=overOne.length()-1;
-			for(int i =0;i<overOne.length();i++){
-				if(overOne.charAt(i)=='0'){
-					trueIndex=trueIndex-1;
-				}else{
-					break;
-				}
-			}
+			ansSNumber=ansSNumber.substring(1);
 		}
 		trueIndex = (int) (trueIndex+Math.pow(2, (double)(eLength-1))-1);
 		index= aAlu.integerRepresentation(""+trueIndex, eLength);
-		ans  = ans+index+sNumber;
+		
+		ans  = ans+index+ansSNumber;//不是直接加上sNumber
 		return ans;
 	}
 	
