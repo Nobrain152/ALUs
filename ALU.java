@@ -74,6 +74,18 @@ public class ALU {
 			return '2';
 		}
 	}
+	//进行补符号位的操作
+	public String makeFull(String s,int length){
+		String anString=s;
+		for(int i=s.length();i<length;i++){
+			if (s.charAt(0)=='1') {
+				anString='1'+anString;
+			}else{
+				anString='0'+anString;
+			}
+		}
+		return anString;
+	}
 	
 	
 	/**
@@ -133,6 +145,7 @@ public class ALU {
 		// TODO YOUR CODE HERE.
 		String ans = "";
 		String index = "";
+		
 		//符号位
 		if(number.charAt(0)=='-'){
 			ans = ans+"1";
@@ -140,12 +153,13 @@ public class ALU {
 		}else{
 			ans = ans+"0";
 		}
+		
 		//底数
 		String[] spare = new String[2];
 		spare = number.split("\\.");
 		String overOne = Integer.toBinaryString(Integer.parseInt(spare[0]));
 		//小于1
-		String lowerOne = null;
+		String lowerOne = "";
 		int max = sLength-overOne.length();
 		int lower = Integer.parseInt(spare[1]);
 		//小数部分
@@ -154,7 +168,7 @@ public class ALU {
 				break;
 			}
 			lower=lower*2;
-			if(lower>=Math.pow(10, (double)(spare[1].length()+1))){
+			if(lower>=Math.pow(10, (double)(spare[1].length()))){
 				lowerOne=lowerOne+"1";
 				lower=(int) (lower-Math.pow(10, (double)(spare[1].length()+1)));
 			}else{
@@ -162,7 +176,7 @@ public class ALU {
 			}
 		}
 		//sNumber 是最终的底数
-		String sNumber = overOne+lowerOne;
+		String sNumber = (overOne+lowerOne).substring(1);
 		for(int i =sNumber.length();i<sLength;i++){
 			sNumber=sNumber+"0";
 		}
@@ -493,8 +507,6 @@ public class ALU {
 	 */
 	public String integerSubtraction (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
-
-		
 		String ans="";
 		String n2=Not(operand2);
 		n2=aAlu.oneAdder(n2).substring(1);
@@ -502,17 +514,14 @@ public class ALU {
 		ans=aAlu.adder(operand1,n2,'0',length).substring(1);
 		
 		char sn=aAlu.adder(operand1,n2,'0',length).charAt(1);
+		
 		if(Or(And(And(operand1.charAt(0), n2.charAt(0)), charNot(sn)), And(And(charNot(operand1.charAt(0)), charNot(n2.charAt(0))), sn))=='1'){
 			ans="1"+ans;
 		}else{
 			ans="0"+ans;
 		}
 		return ans;
-		
-
-		
-
-	}
+		}
 	
 	/**
 	 * 整数乘法，使用Booth算法实现，可调用{@link #adder(String, String, char, int) adder}等方法。<br/>
@@ -523,50 +532,54 @@ public class ALU {
 	 * @return 长度为length+1的字符串表示的相乘结果，其中第1位指示是否溢出（溢出为1，否则为0），后length位是相乘结果
 	 */
 	//oprand1当y，operand2当x
-	//length 是operand1的长度的两倍
+	//ans.length 是operand1的长度的两倍
 	public String integerMultiplication (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
 		//在前面补位
 		//n1,n2是补全符号位之后的op1.op2
-		String n1=operand1,n2=operand2,ans=operand1,n2s=oneAdder(Not(operand2)).substring(1);
+		String n1=operand1,n2=operand2,ans="",n2s=oneAdder(Not(operand2)).substring(1);
+		//ans算的时候长度是寄存器长度的两倍
 		//ans长度应该是寄存器长度
 		
 		char sub;
-		for(int i=operand1.length();i<length;i++){
-			if(operand1.charAt(0)=='0'){
-				n1="0"+n1;
-			}else{
-				n1="1"+n1;
-			}
-		}
+		n1=makeFull(operand1, length);
+		n2=makeFull(operand2, length);
+		n2s=makeFull(n2s, length);
 		
-		for(int i=operand2.length();i<length;i++){
-			n2=n2+'0';
-			n2s=n2s+'0';
-		}
-		for (int i = operand1.length(); i < length; i++) {
+		ans=n1;
+		for (int i = 0; i < length; i++) {
 			ans="0"+ans;
 		}
+		
 		n1=n1+'0';
+		for (int i = 0; i < length; i++) {
+			n2=n2+'0';
+		}
 		
 		
-		
-		for(int i=0;i<operand1.length();i++){
+		for(int i=0;i<n1.length()-1;i++){
 			//Y0-Y1
 			sub = charSub(n1.charAt(n1.length()-1-i),n1.charAt(n1.length()-2-i));
 			if(sub=='1'){
-				ans = adder(ans, n2, '0', length).substring(1);
+				ans = adder(ans, n2, '0', length*2).substring(1);
 			}else if(sub=='2'){
-				ans = integerSubtraction(ans, n2, length).substring(1);
+				ans = integerSubtraction(ans, n2, length*2).substring(1);
 			}
 			ans = aAlu.ariRightShift(ans, 1);
 			//补符号位
 			
 			//ans=(2^-1)(左移)*(ans+operand2*(n1.charAt(operand1.length()-i)-n1.charAt(operand1.length()-i-1)));
 		}
-		
+		String zero="";
+		for (int i = 0; i < length; i++) {
+			zero=zero+"0";
+		}
 		//溢出的一位没有考虑
-
+		if(ans.substring(0, length).equals(zero)){
+			ans="0"+ans.substring(length);
+		}else{
+			ans="1"+ans.substring(length);
+		}
 		return ans;
 	}
 	
