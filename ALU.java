@@ -1,6 +1,9 @@
 package ALUs;
 
+import java.awt.geom.Ellipse2D;
+import java.nio.channels.OverlappingFileLockException;
 import java.sql.SQLNonTransientConnectionException;
+import java.util.Random;
 
 import javax.naming.NamingEnumeration;
 import javax.print.attribute.standard.RequestingUserName;
@@ -140,9 +143,39 @@ public class ALU {
 	 * @param sLength 尾数的长度，取值大于等于 4
 	 * @return number的二进制表示，长度为 1+eLength+sLength。从左向右，依次为符号、指数（移码表示）、尾数（首位隐藏）
 	 */
- 	//特殊情况未表示，一点都没调试过
+ 	//反规格化没有考虑
 	public String floatRepresentation (String number, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
+		
+		String overInf="1",lowerInf="0",zero="0",NaN="0";
+		for (int i = 0; i < eLength; i++) {
+			overInf=overInf+"1";
+			lowerInf=lowerInf+"1";
+			NaN=NaN+"1";
+			zero=zero+"0";
+		}
+		for (int i = 0; i < sLength; i++) {
+			overInf=overInf+"0";
+			lowerInf=lowerInf+"0";
+			zero=zero+"0";
+		}
+		if(number.equals("+Inf")){
+			return overInf;
+		}
+		if(number.equals("-Inf")){
+			return lowerInf;
+		}
+		if(number.equals("0")){
+			return zero;
+		}
+		if(number.equals("-0")){
+			return "1"+zero.substring(1);
+		}
+		if (number.equals("NaN")) {
+			return NaN;
+		}
+		
+		
 		String ans = "";
 		String index = "";
 		
@@ -215,7 +248,13 @@ public class ALU {
 	 */
 	public String ieee754 (String number, int length) {
 		// TODO YOUR CODE HERE.
-		return null;
+		if(length==32){
+			return floatRepresentation(number, 8, 23);
+		}else{
+			//数字不确定
+			return floatRepresentation(number, 16, 47);
+		}
+		
 	}
 	
 	/**
@@ -258,7 +297,31 @@ public class ALU {
 	 */
 	public String floatTrueValue (String operand, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
-		
+		//特殊的二进制数
+		String overInf="1",lowerInf="0",zero="0",NaN="1";
+		for (int i = 0; i < eLength; i++) {
+			overInf=overInf+"1";
+			lowerInf=lowerInf+"1";
+			NaN=NaN+"1";
+			zero=zero+"0";
+		}
+		for (int i = 0; i < sLength; i++) {
+			overInf=overInf+"0";
+			lowerInf=lowerInf+"0";
+			zero=zero+"0";
+		}
+		if(operand.equals(overInf)){
+			return "+Inf";
+		}
+		if(operand.equals(lowerInf)){
+			return "-Inf";
+		}
+		if(operand.equals(zero)){
+			return "0";
+		}
+		if(operand.substring(1,1+eLength).equals(NaN.substring(1))){
+			return "NaN";
+		}
 		return null;
 	}
 	
@@ -474,8 +537,12 @@ public class ALU {
 			}
 			cs=aAlu.claAdder(operand1.substring(length-i,length-i+4), operand2.substring(length-i,length-i+4), cs).charAt(0);
 		}
-		if(cs=='1'){
-			anString="1"+anString;
+		if(n1.charAt(0)==n2.charAt(0)){
+			if (anString.charAt(0)==n1.charAt(0)) {
+				anString="0"+anString;
+			}else{
+				anString="1"+anString;
+			}
 		}else{
 			anString="0"+anString;
 		}
@@ -608,6 +675,23 @@ public class ALU {
 	 */
 	public String signedAddition (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
+		//补全位数
+		String n1=operand1.substring(1),n2=operand2.substring(1);
+		for (int i = operand1.length(); i < length; i++) {
+			n1="0"+n1;
+			n2="0"+n2;
+		}
+		n1=operand1.charAt(0)+n1;
+		n2=operand2.charAt(0)+n2;
+		String ans="";
+		//符号位相同和不相同
+		if(operand1.charAt(0)==operand2.charAt(0)){
+			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).substring(2);
+			ans=operand1.charAt(1)+ans;
+			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).charAt(1)+ans;
+		}else{
+			
+		}
 		return null;
 	}
 	
