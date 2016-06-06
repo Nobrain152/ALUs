@@ -228,11 +228,15 @@ public class ALU {
 					break;
 				}
 				}
+			
+			
 		}else{
 			trueIndex=overOne.length()-1;
 			ansSNumber=ansSNumber.substring(1);
+			
 		}
 		trueIndex = (int) (trueIndex+Math.pow(2, (double)(eLength-1))-1);
+		
 		index= aAlu.integerRepresentation(""+trueIndex, eLength);
 		
 		ans  = ans+index+ansSNumber;//不是直接加上sNumber
@@ -687,12 +691,19 @@ public class ALU {
 		//符号位相同和不相同
 		if(operand1.charAt(0)==operand2.charAt(0)){
 			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).substring(2);
+			//补上符号位
 			ans=operand1.charAt(1)+ans;
+			//溢出位
 			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).charAt(1)+ans;
 		}else{
-			
+			String text="";
+			if(n1.charAt(0)=='1'){
+				
+			}else{
+				
+			}
 		}
-		return null;
+		return ans;
 	}
 	
 	/**
