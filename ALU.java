@@ -299,6 +299,7 @@ public class ALU {
 	 * @param sLength 尾数的长度，取值大于等于 4
 	 * @return operand的真值。若为负数；则第一位为“-”；若为正数或 0，则无符号位。正负无穷分别表示为“+Inf”和“-Inf”， NaN表示为“NaN”
 	 */
+	//没写完
 	public String floatTrueValue (String operand, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
 		//特殊的二进制数
@@ -325,6 +326,11 @@ public class ALU {
 		}
 		if(operand.substring(1,1+eLength).equals(NaN.substring(1))){
 			return "NaN";
+		}
+		//表示普通的浮点数
+		String ans="";
+		if(operand.charAt(0)=='1'){
+			ans="-"+ans;
 		}
 		return null;
 	}
@@ -696,11 +702,19 @@ public class ALU {
 			//溢出位
 			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).charAt(1)+ans;
 		}else{
-			String text="";
-			if(n1.charAt(0)=='1'){
-				
+			
+			//符号位的决定
+			//谁的值比较大，就用谁减去另一个
+			//n1比较大的情况
+			if(Integer.parseInt(integerTrueValue("0"+n1.substring(1)))>Integer.parseInt(integerTrueValue("0"+n2.substring(1)))){
+				ans=ans+integerSubtraction("0"+n1.substring(1), "0"+n2.substring(1), length).substring(1);
+				ans=n1.charAt(0)+ans;
+			}else if(Integer.parseInt(integerTrueValue("0"+n1.substring(1)))==Integer.parseInt(integerTrueValue("0"+n2.substring(1)))){
+				ans=ans+integerSubtraction("0"+n1.substring(1), "0"+n2.substring(1), length).substring(1);
+				ans='0'+ans;
 			}else{
-				
+				ans=ans+integerSubtraction("0"+n2.substring(1), "0"+n1.substring(1), length).substring(1);
+				ans = n2.charAt(0)+ans;
 			}
 		}
 		return ans;
