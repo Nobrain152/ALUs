@@ -196,7 +196,7 @@ public class ALU {
 		int max = sLength-overOne.length();
 		int lower = Integer.parseInt(spare[1]);
 		//小数部分
-		for(int i =0;i<max;i++){
+		for(int i =0;i<max+1;i++){
 			if(lower==0){
 				break;
 			}
@@ -215,7 +215,7 @@ public class ALU {
 			sNumber=sNumber+"0";
 		}
 		
-		String ansSNumber=sNumber+"0";
+		String ansSNumber=sNumber;
 		
 		//指数
 		int trueIndex = 0;
@@ -332,7 +332,18 @@ public class ALU {
 		if(operand.charAt(0)=='1'){
 			ans="-"+ans;
 		}
-		return null;
+		String index = operand.substring(1, 1+eLength);
+		double trueIndex = (Integer.parseInt(integerTrueValue(index))-(Math.pow(2, (double)(eLength-1))-1));
+		
+		//底数应该循环相加得到
+		double sNumber =0;
+		String sString = operand.substring(1+eLength);
+		for (int i = 0; i < index.length(); i++) {
+			sNumber=sNumber+Math.pow(2, (-i-1))*Integer.parseInt(""+sString.charAt(i));
+			
+		}
+		double ansNumber= ((1+sNumber)*Math.pow(2, trueIndex));
+		return ans+ansNumber;
 	}
 	
 	/**
