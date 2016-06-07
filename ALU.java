@@ -7,6 +7,7 @@ import java.util.Random;
 
 import javax.naming.NamingEnumeration;
 import javax.print.attribute.standard.RequestingUserName;
+import javax.security.auth.Subject;
 import javax.swing.tree.AbstractLayoutCache;
 
 import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
@@ -680,8 +681,69 @@ public class ALU {
 	 */
 	public String integerDivision (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
+		//n1,n2用于修改
+		String n1=operand1,n2=operand2;
+		//补全n1的符号位
+		for (int i = operand1.length(); i < 2*length; i++) {
+			if(operand1.charAt(0)=='1'){
+				n1='1'+n1;
+			}else{
+				n1="0"+n1;
+			}
+		}
+		//n2左移方便相加
+		for (int i = operand2.length(); i < 2*length; i++) {
+			n2=n2+'0';
+		}
 		
-		return null;
+		//先单独进行一次
+		//相加与补位
+		if(n1.charAt(0)!=n2.charAt(0)){
+			n1=adder(n1, n2, '0', 2*length).substring(1);
+			//System.out.println(n1);
+			if(n1.charAt(0)==n2.charAt(0)){
+				n1=n1+'1';
+			}else{
+				n1=n1+'0';
+			}
+		}else{
+			n1=integerSubtraction(n1, n2, 2*length).substring(1);
+			if(n1.charAt(0)==n2.charAt(0)){
+				n1=n1+'1';
+			}else{
+				n1=n1+'0';
+			}
+		}
+		
+		for (int i = 0; i < length; i++) {
+			//n1的长度仍然是2Length
+			n1=n1.substring(1);
+			if(n1.charAt(0)!=n2.charAt(0)){
+				n1=adder(n1, n2, '0', 2*length).substring(1);
+				if(n1.charAt(0)==n2.charAt(0)){
+					n1=n1+'1';
+				}else{
+					n1=n1+'0';
+				}
+			}else{
+				n1=integerSubtraction(n1, n2, 2*length).substring(1);
+				if(n1.charAt(0)==n2.charAt(0)){
+					n1=n1+'1';
+				}else{
+					n1=n1+'0';
+				}
+			}
+		}
+		
+		String yuShu=n1.substring(0,length);
+		if(n1.charAt(0)!=operand1.charAt(0)){
+			yuShu=(integerSubtraction(n1.substring(0, 2*length), n2, 2*length)).substring(1,1+length);
+		}
+		String quotient=n1.substring(length+1);
+		if(operand1.charAt(0)!=operand2.charAt(0)){
+			quotient=oneAdder(quotient).substring(1);
+		}
+		return "0"+quotient+yuShu;
 	}
 	
 	/**
@@ -704,16 +766,17 @@ public class ALU {
 		}
 		n1=operand1.charAt(0)+n1;
 		n2=operand2.charAt(0)+n2;
+		
 		String ans="";
 		//符号位相同和不相同
 		if(operand1.charAt(0)==operand2.charAt(0)){
-			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).substring(2);
+			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).substring(1);
 			//补上符号位
 			ans=operand1.charAt(1)+ans;
 			//溢出位
 			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).charAt(1)+ans;
 		}else{
-			
+			ans="0"+ans;
 			//符号位的决定
 			//谁的值比较大，就用谁减去另一个
 			//n1比较大的情况

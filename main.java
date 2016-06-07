@@ -14,7 +14,9 @@ public class main {
 		//System.out.println(aAlu.floatRepresentation("1.8125", 4, 8));
 		//System.out.println(aAlu.makeFull("0010", 8));
 		//System.out.println(aAlu.adder("1011", "1000", '0', 8));
-		//System.out.println(aAlu.signedAddition("0010", "0101", 4));
-		System.out.println(aAlu.floatTrueValue("001111101", 4, 4));
+		//System.out.println(aAlu.signedAddition("0111", "1001", 4));
+		//System.out.println(aAlu.floatTrueValue("001111101", 4, 4));
+		System.out.println(aAlu.integerDivision("1001", "0011", 4));
+		//System.out.println(aAlu.signedAddition("0100", "1010", 4));
 	}
 }
