@@ -1,6 +1,7 @@
 package ALUs;
 
 import java.awt.geom.Ellipse2D;
+import java.net.Inet4Address;
 import java.nio.channels.OverlappingFileLockException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.Random;
@@ -251,13 +252,14 @@ public class ALU {
 	 * @param length 二进制表示的长度，为32或64
 	 * @return number的IEEE 754表示，长度为length。从左向右，依次为符号、指数（移码表示）、尾数（首位隐藏）
 	 */
+	//没写完
 	public String ieee754 (String number, int length) {
 		// TODO YOUR CODE HERE.
 		if(length==32){
 			return floatRepresentation(number, 8, 23);
 		}else{
 			//数字不确定
-			return floatRepresentation(number, 16, 47);
+			return floatRepresentation(number, 11, 52);
 		}
 		
 	}
@@ -772,9 +774,9 @@ public class ALU {
 		if(operand1.charAt(0)==operand2.charAt(0)){
 			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).substring(1);
 			//补上符号位
-			ans=operand1.charAt(1)+ans;
+			ans=operand1.charAt(0)+ans;
 			//溢出位
-			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).charAt(1)+ans;
+			ans=adder("0"+n1.substring(1), "0"+n2.substring(1), '0', length).charAt(0)+ans;
 		}else{
 			ans="0"+ans;
 			//符号位的决定
@@ -806,7 +808,64 @@ public class ALU {
 	 */
 	public String floatAddition (String operand1, String operand2, int eLength, int sLength, int gLength) {
 		// TODO YOUR CODE HERE.
-		return null;
+		//zero是保护位
+		String zero="";
+		for (int i = 0; i < gLength; i++) {
+			zero=zero+'0';
+		}
+		//生成全是一的指数位
+		String maxIndex="";
+		for (int i = 0; i < eLength; i++) {
+			maxIndex="1"+maxIndex;
+		}
+		
+		
+		//n1,n2用于修改
+		String n1=operand1+zero,n2=operand2+zero;
+		String index="";
+		//用于储存指数差
+		int D_value=0;
+		String bigger="",smaller="";
+		char sign;
+		//index取大的指数
+		if(Integer.parseInt(integerTrueValue(operand1.substring(1, 1+eLength)))>=Integer.parseInt(integerTrueValue(operand2.substring(1, 1+eLength)))){
+			index = operand1.substring(1, 1+eLength);
+			D_value=Integer.parseInt(integerTrueValue(operand1.substring(1, 1+eLength)))-Integer.parseInt(integerTrueValue(operand2.substring(1, 1+eLength)));
+			bigger=n1;
+			sign=operand1.charAt(0);
+			smaller=n2;
+		}else{
+			index = operand2.substring(1, 1+eLength);
+			D_value=Integer.parseInt(integerTrueValue(operand2.substring(1, 1+eLength)))-Integer.parseInt(integerTrueValue(operand1.substring(1, 1+eLength)));
+			bigger=n2;
+			sign=operand2.charAt(0);
+			smaller=n1;
+		}
+		smaller=ariRightShift(smaller, D_value);
+		//溢出位
+		String over="0";
+		//底数相加
+		String sNumber="";
+		if(operand1.charAt(0)==operand2.charAt(0)){
+			sNumber=adder(bigger.substring(1+eLength), smaller.substring(1+eLength), '0', sLength+gLength);
+			
+		}else{
+			sNumber=integerSubtraction(bigger.substring(1+eLength), smaller.substring(1+eLength), sLength+gLength);
+		}
+		if(sNumber.charAt(0)=='1'){
+			index=oneAdder(index);
+			if(index.charAt(0)=='1'){
+				over="1";
+			}
+			index=index.substring(1);
+		}
+		
+		if(operand1.substring(1, 1+eLength).equals(maxIndex)&&operand2.substring(1, 1+eLength).equals(maxIndex)&&sNumber.charAt(0)=='1'){
+			over="1";
+		}
+		sNumber=sNumber.substring(1);
+		
+		return over+sign+index+sNumber;
 	}
 	
 	/**
@@ -821,7 +880,12 @@ public class ALU {
 	 */
 	public String floatSubtraction (String operand1, String operand2, int eLength, int sLength, int gLength) {
 		// TODO YOUR CODE HERE.
-		return null;
+		if(operand2.charAt(0)=='0'){
+			operand2='1'+operand2.substring(1);
+		}else{
+			operand2='0'+operand2.substring(1);
+		}
+		return floatAddition(operand1, operand2, eLength, sLength, gLength);
 	}
 	
 	/**
@@ -835,7 +899,43 @@ public class ALU {
 	 */
 	public String floatMultiplication (String operand1, String operand2, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
-		return null;
+		//溢出位
+		String over="";
+		if(operand1.equals("0")){
+			return "0";
+		}else if(operand2.equals("0")){
+			return "0";
+		}
+		//指数
+		String index = "";
+		index=signedAddition(operand1.substring(1,1+eLength), operand2.substring(1,1+eLength), eLength);
+		System.out.println(index);
+		if(index.charAt(0)=='1'){
+			over="1";
+		}else{
+			over="0";
+		}
+		index=index.substring(1);
+		//符号位
+		String integer="";
+		if(operand1.charAt(0)==operand2.charAt(0)){
+			integer="0";
+		}else{
+			integer="1";
+		}
+		//底数
+		String sNumber="";
+		sNumber=integerMultiplication("0"+operand1.substring(1+eLength), "0"+operand2.substring(1+eLength),2+2*sLength).substring(2);
+		//如果底数溢出，那么便指数加一
+		if(sNumber.charAt(1)=='1'){
+			index=oneAdder(index);
+			if(index.charAt(0)=='1'){
+				over="1";
+			}
+			index=index.substring(1);
+		}
+		
+		return over+" "+integer+" "+index+" "+sNumber;
 	}
 	
 	/**
@@ -849,6 +949,33 @@ public class ALU {
 	 */
 	public String floatDivision (String operand1, String operand2, int eLength, int sLength) {
 		// TODO YOUR CODE HERE.
+		String over="";
+		if(operand1.equals("0")){
+			return "0";
+		}else if(operand2.equals("0")){
+			if(operand1.charAt(0)==operand2.charAt(0)){
+				return "+Inf";
+			}else{
+				return "-Inf";
+			}
+		}
+		//指数
+		String index = "";
+		index=integerSubtraction("0"+operand1.substring(1,1+eLength), "0"+operand2.substring(1,1+eLength), 1+eLength);
+		if(index.charAt(0)=='1'){
+			over="1";
+		}else{
+			over="0";
+		}
+		index=index.substring(1);
+		//符号位
+		String integer="";
+		if(operand1.charAt(0)==operand2.charAt(0)){
+			integer="0";
+		}else{
+			integer="1";
+		}		
+		
 		return null;
 	}
 }
