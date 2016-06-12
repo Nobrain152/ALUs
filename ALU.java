@@ -808,6 +808,7 @@ public class ALU {
 	 */
 	public String floatAddition (String operand1, String operand2, int eLength, int sLength, int gLength) {
 		// TODO YOUR CODE HERE.
+		char subSign='0';
 		//zero是保护位
 		String zero="";
 		for (int i = 0; i < gLength; i++) {
@@ -828,42 +829,75 @@ public class ALU {
 		String bigger="",smaller="";
 		char sign;
 		//index取大的指数
-		if(Integer.parseInt(integerTrueValue(operand1.substring(1, 1+eLength)))>=Integer.parseInt(integerTrueValue(operand2.substring(1, 1+eLength)))){
+		if(Integer.parseInt(integerTrueValue("0"+operand1.substring(1, 1+eLength)))>Integer.parseInt(integerTrueValue("0"+operand2.substring(1, 1+eLength)))){
 			index = operand1.substring(1, 1+eLength);
-			D_value=Integer.parseInt(integerTrueValue(operand1.substring(1, 1+eLength)))-Integer.parseInt(integerTrueValue(operand2.substring(1, 1+eLength)));
+			D_value=Integer.parseInt(integerTrueValue("0"+operand1.substring(1, 1+eLength)))-Integer.parseInt(integerTrueValue("0"+operand2.substring(1, 1+eLength)));
 			bigger=n1;
 			sign=operand1.charAt(0);
 			smaller=n2;
+		}else if(Integer.parseInt(integerTrueValue("0"+operand1.substring(1, 1+eLength)))==Integer.parseInt(integerTrueValue("0"+operand2.substring(1, 1+eLength)))){
+			if(Integer.parseInt(integerTrueValue("0"+operand1.substring(1+eLength)))>=Integer.parseInt(integerTrueValue("0"+operand2.substring(1+eLength)))){
+				index = operand1.substring(1, 1+eLength);
+				D_value=Integer.parseInt(integerTrueValue("0"+operand1.substring(1, 1+eLength)))-Integer.parseInt(integerTrueValue("0"+operand2.substring(1, 1+eLength)));
+				bigger=n1;
+				sign=operand1.charAt(0);
+				smaller=n2;
+			}else{
+				index = operand1.substring(1, 1+eLength);
+				D_value=Integer.parseInt(integerTrueValue("0"+operand1.substring(1, 1+eLength)))-Integer.parseInt(integerTrueValue("0"+operand2.substring(1, 1+eLength)));
+				bigger=n2;
+				sign=operand1.charAt(0);
+				smaller=n1;
+			}
 		}else{
 			index = operand2.substring(1, 1+eLength);
-			D_value=Integer.parseInt(integerTrueValue(operand2.substring(1, 1+eLength)))-Integer.parseInt(integerTrueValue(operand1.substring(1, 1+eLength)));
+			D_value=Integer.parseInt(integerTrueValue("0"+operand2.substring(1, 1+eLength)))-Integer.parseInt("0"+integerTrueValue(operand1.substring(1, 1+eLength)));
 			bigger=n2;
 			sign=operand2.charAt(0);
 			smaller=n1;
 		}
-		smaller=ariRightShift(smaller, D_value);
+		//smaller只存底数和保护位
+		smaller=ariRightShift(smaller.substring(1+eLength), D_value);
 		//溢出位
 		String over="0";
 		//底数相加
 		String sNumber="";
 		if(operand1.charAt(0)==operand2.charAt(0)){
-			sNumber=adder(bigger.substring(1+eLength), smaller.substring(1+eLength), '0', sLength+gLength);
-			
-		}else{
-			sNumber=integerSubtraction(bigger.substring(1+eLength), smaller.substring(1+eLength), sLength+gLength);
-		}
-		if(sNumber.charAt(0)=='1'){
-			index=oneAdder(index);
-			if(index.charAt(0)=='1'){
-				over="1";
+			sNumber=adder(bigger.substring(1+eLength), smaller, '0', sLength+gLength);
+			//看是否溢出
+			if(sNumber.charAt(0)=='1'){
+				index=oneAdder(index);
+				if(index.charAt(0)=='1'){
+					over="1";
+				}
+				index=index.substring(1);
 			}
-			index=index.substring(1);
+		}else{
+			subSign='1';
+			//绝对不会溢出
+			sNumber=integerSubtraction(bigger.substring(1+eLength), smaller, sLength+gLength);
+			//去掉绝对是0的溢出位
+			sNumber=leftShift(sNumber, 1);
+			for (int i = 0; i < eLength; i++) {
+				if(sNumber.charAt(0)=='0'){
+					index=integerSubtraction(index, "01", eLength).substring(1);
+					sNumber=leftShift(sNumber, 1);
+				}else{
+					index=integerSubtraction(index, "01", eLength).substring(1);
+					sNumber=leftShift(sNumber, 1);
+					break;
+				}
+			}
+			
 		}
 		
-		if(operand1.substring(1, 1+eLength).equals(maxIndex)&&operand2.substring(1, 1+eLength).equals(maxIndex)&&sNumber.charAt(0)=='1'){
-			over="1";
+		
+		
+		if(subSign!='1'){
+			sNumber=sNumber.substring(1);
 		}
-		sNumber=sNumber.substring(1);
+		
+		sNumber=sNumber.substring(0, sLength);
 		
 		return over+sign+index+sNumber;
 	}
@@ -908,7 +942,7 @@ public class ALU {
 		}
 		//指数
 		String index = "";
-		index=signedAddition(operand1.substring(1,1+eLength), operand2.substring(1,1+eLength), eLength);
+		index=""+Integer.parseInt("0"+operand1.substring(1,1+eLength))+Integer.parseInt("0"+operand2.substring(1,1+eLength));
 		System.out.println(index);
 		if(index.charAt(0)=='1'){
 			over="1";
@@ -934,7 +968,7 @@ public class ALU {
 			}
 			index=index.substring(1);
 		}
-		
+		sNumber=sNumber.substring(1, 1+sLength);
 		return over+" "+integer+" "+index+" "+sNumber;
 	}
 	
