@@ -598,6 +598,22 @@ public class ALU {
 	public String integerSubtraction (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
 		String ans="";
+		String n1=operand1,n3=operand2;
+		for(int i=n1.length();i<length;i++){
+			if(operand1.charAt(0)=='0'){
+				operand1="0"+operand1;
+			}else{
+				operand1="1"+operand1;
+			}
+		}
+		for(int i=n3.length();i<length;i++){
+			if(operand2.charAt(0)=='0'){
+				operand2="0"+operand2;
+			}else{
+				operand2="1"+operand2;
+			}
+		}
+		
 		String n2=Not(operand2);
 		n2=aAlu.oneAdder(n2).substring(1);
 		
@@ -660,16 +676,34 @@ public class ALU {
 			
 			//ans=(2^-1)(左移)*(ans+operand2*(n1.charAt(operand1.length()-i)-n1.charAt(operand1.length()-i-1)));
 		}
-		String zero="";
+		String zero="",one="";
 		for (int i = 0; i < length; i++) {
 			zero=zero+"0";
+			one=one+"1";
 		}
-		//溢出的一位没有考虑
-		if(ans.substring(0, length).equals(zero)){
-			ans="0"+ans.substring(length);
+		
+		char integer;
+		if(operand1.charAt(0)==operand2.charAt(0)){
+			integer='0';
 		}else{
-			ans="1"+ans.substring(length);
+			integer='1';
 		}
+		
+		//只有前面的位数都是零并且第一位符号没错误，才不溢出
+		if(integer=='0'){
+			if(ans.substring(0, length).equals(zero)){
+			ans="0"+ans.substring(length);
+			}else{
+				ans="1"+ans.substring(length);
+			}
+		}else{
+			if(ans.substring(0, length).equals(one)&&ans.charAt(length)!='0'){
+				ans="0"+ans.substring(length);
+			}else{
+				ans="1"+ans.substring(length);
+			}
+		}
+		
 		return ans;
 	}
 	
@@ -872,6 +906,12 @@ public class ALU {
 				}
 				index=index.substring(1);
 			}
+			index=oneAdder(index);
+			if(index.charAt(0)=='1'){
+				over="1";
+			}
+			index=index.substring(1);
+			sNumber=logRightShift(sNumber, 1);
 		}else{
 			subSign='1';
 			//绝对不会溢出
@@ -942,8 +982,15 @@ public class ALU {
 		}
 		//指数
 		String index = "";
-		index=""+Integer.parseInt("0"+operand1.substring(1,1+eLength))+Integer.parseInt("0"+operand2.substring(1,1+eLength));
-		System.out.println(index);
+		String one="";
+		for (int i = 1; i < eLength; i++) {
+			one=one+"1";
+		}
+		
+		String string=integerSubtraction("0"+operand1.substring(1,1+eLength), "0"+one, 4+eLength).substring(2);
+		System.out.println(string);
+		index=adder("0"+string, "0"+operand2.substring(1, 1+eLength), '0', eLength+4);
+		
 		if(index.charAt(0)=='1'){
 			over="1";
 		}else{
@@ -959,16 +1006,10 @@ public class ALU {
 		}
 		//底数
 		String sNumber="";
-		sNumber=integerMultiplication("0"+operand1.substring(1+eLength), "0"+operand2.substring(1+eLength),2+2*sLength).substring(2);
+		sNumber=integerMultiplication("0"+operand1.substring(1+eLength), "0"+operand2.substring(1+eLength),1+sLength);
+		
 		//如果底数溢出，那么便指数加一
-		if(sNumber.charAt(1)=='1'){
-			index=oneAdder(index);
-			if(index.charAt(0)=='1'){
-				over="1";
-			}
-			index=index.substring(1);
-		}
-		sNumber=sNumber.substring(1, 1+sLength);
+		sNumber=sNumber.substring(1);
 		return over+" "+integer+" "+index+" "+sNumber;
 	}
 	
