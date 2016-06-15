@@ -27,7 +27,7 @@ public class main {
 		//System.out.println(aAlu.floatTrueValue("00111110000000000", 8, 8));
 		//System.out.println(aAlu.integerDivision("1001", "0011", 4));
 		//System.out.println(aAlu.signedAddition("01111101", "01111110", 8));
-		System.out.println(aAlu.floatMultiplication("00111110111000000", "00111111000000000", 8, 8));
+		//System.out.println(aAlu.floatMultiplication("00111110111000000", "00111111000000000", 8, 8));
 		//System.out.println(aAlu.adder("01111101", "01111110", '0', 8));
 		//System.out.println(aAlu.integerSubtraction("01111110", "01111111",12));
 	}
