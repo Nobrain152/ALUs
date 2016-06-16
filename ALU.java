@@ -213,6 +213,7 @@ public class ALU {
 		}
 		//sNumber 是最终的实数部分
 		String sNumber = (overOne+lowerOne);
+		
 		for(int i =sNumber.length();i<sLength;i++){
 			sNumber=sNumber+"0";
 		}
@@ -240,7 +241,9 @@ public class ALU {
 		trueIndex = (int) (trueIndex+Math.pow(2, (double)(eLength-1))-1);
 		
 		index= aAlu.integerRepresentation(""+trueIndex, eLength);
-		
+		for (int i = ansSNumber.length(); i < sLength; i++) {
+			ansSNumber=ansSNumber+"0";
+		}
 		ans  = ans+index+ansSNumber;//不是直接加上sNumber
 		return ans;
 	}
@@ -337,14 +340,13 @@ public class ALU {
 			ans="-"+ans;
 		}
 		String index = operand.substring(1, 1+eLength);
-		double trueIndex = (Integer.parseInt(integerTrueValue(index))-(Math.pow(2, (double)(eLength-1))-1));
+		double trueIndex = (Integer.parseInt(integerTrueValue("0"+index))-(Math.pow(2, (double)(eLength-1))-1));
 		
 		//底数应该循环相加得到
 		double sNumber =0;
 		String sString = operand.substring(1+eLength);
 		for (int i = 0; i < index.length(); i++) {
 			sNumber=sNumber+Math.pow(2, (-i-1))*Integer.parseInt(""+sString.charAt(i));
-			
 		}
 		double ansNumber= ((1+sNumber)*Math.pow(2, trueIndex));
 		return ans+ansNumber;
@@ -716,6 +718,7 @@ public class ALU {
 	 * @param length 存放操作数的寄存器的长度，为4的倍数。length不小于操作数的长度，当某个操作数的长度小于length时，需要在高位补符号位
 	 * @return 长度为2*length+1的字符串表示的相除结果，其中第1位指示是否溢出（溢出为1，否则为0），其后length位为商，最后length位为余数
 	 */
+	//错了
 	public String integerDivision (String operand1, String operand2, int length) {
 		// TODO YOUR CODE HERE.
 		//n1,n2用于修改
@@ -729,58 +732,51 @@ public class ALU {
 			}
 		}
 		//n2左移方便相加
-		for (int i = operand2.length(); i < 2*length; i++) {
+		for (int i = operand2.length(); i < (2*length)+1; i++) {
 			n2=n2+'0';
 		}
 		
-		//先单独进行一次
-		//相加与补位
+		//最后一位决定是相加还是相减，最后一位由？决定？
+		String consult="",remainder="";
 		if(n1.charAt(0)!=n2.charAt(0)){
 			n1=adder(n1, n2, '0', 2*length).substring(1);
-			//System.out.println(n1);
-			if(n1.charAt(0)==n2.charAt(0)){
-				n1=n1+'1';
-			}else{
-				n1=n1+'0';
-			}
+			n1=n1+"1";
 		}else{
 			n1=integerSubtraction(n1, n2, 2*length).substring(1);
-			if(n1.charAt(0)==n2.charAt(0)){
-				n1=n1+'1';
-			}else{
-				n1=n1+'0';
-			}
+			n1=n1+"0";
 		}
 		
 		for (int i = 0; i < length; i++) {
-			//n1的长度仍然是2Length
-			n1=n1.substring(1);
-			if(n1.charAt(0)!=n2.charAt(0)){
+			n1=leftShift(n1, 1);
+			if(n1.charAt(2*length-1)=='0'){
 				n1=adder(n1, n2, '0', 2*length).substring(1);
-				if(n1.charAt(0)==n2.charAt(0)){
-					n1=n1+'1';
-				}else{
-					n1=n1+'0';
-				}
 			}else{
 				n1=integerSubtraction(n1, n2, 2*length).substring(1);
-				if(n1.charAt(0)==n2.charAt(0)){
-					n1=n1+'1';
-				}else{
-					n1=n1+'0';
-				}
+			}
+			if(n1.charAt(0)==n2.charAt(0)){
+				n1=n1.substring(0, 2*length)+"1";
+			}else{
+				n1=n1.substring(0, 2*length)+"0";
 			}
 		}
+		System.out.println(n1);
+		if(n1.charAt(0)==n2.charAt(0)){
+			remainder=n1.substring(0, length);
+		}else{
+			remainder=integerSubtraction(n1, n2, 2*length).substring(1, 1+length);
+		}
+		remainder=n1.substring(0, length);
 		
-		String yuShu=n1.substring(0,length);
 		if(n1.charAt(0)!=operand1.charAt(0)){
-			yuShu=(integerSubtraction(n1.substring(0, 2*length), n2, 2*length)).substring(1,1+length);
+			if(n1.charAt(2*length)=='1'){
+				remainder=integerSubtraction(remainder, n2.substring(0,length), length).substring(1);
+			}else{
+				remainder=adder(remainder, n2.substring(0, length), '0', length).substring(1);
+			}
 		}
-		String quotient=n1.substring(length+1);
-		if(operand1.charAt(0)!=operand2.charAt(0)){
-			quotient=oneAdder(quotient).substring(1);
-		}
-		return "0"+quotient+yuShu;
+		consult=oneAdder(n1.substring(1+length)).substring(1);
+		
+		return "0"+consult+remainder;
 	}
 	
 	/**

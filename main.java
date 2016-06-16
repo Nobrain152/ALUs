@@ -7,6 +7,7 @@ public class main {
 		//System.out.println(aAlu.floatTrueValue("00111111001100000", 8, 8));
 		//System.out.println(aAlu.floatTrueValue(aAlu.floatAddition("00111111000000000", "00111111001100000", 8, 8, 8).substring(1), 8, 8));
 		//System.out.println(aAlu.floatAddition("00111111000000000", "00111111001100000", 8, 8, 8));
+		System.out.print(aAlu.floatSubtraction("00111111010100000", "00111111001000000", 8, 8, 4) );
 		
 		//System.out.println(aAlu.floatTrueValue("00111111010000000", 8, 8));
 		//System.out.println(aAlu.floatTrueValue("00111111001100000", 8, 8));
