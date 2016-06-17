@@ -7,11 +7,12 @@ public class main {
 		//System.out.println(aAlu.floatTrueValue("00111111001100000", 8, 8));
 		//System.out.println(aAlu.floatTrueValue(aAlu.floatAddition("00111111000000000", "00111111001100000", 8, 8, 8).substring(1), 8, 8));
 		//System.out.println(aAlu.floatAddition("00111111000000000", "00111111001100000", 8, 8, 8));
-		System.out.print(aAlu.floatSubtraction("00111111010100000", "00111111001000000", 8, 8, 4) );
+		
+		System.out.println(aAlu.integerDivision("0100", "0011", 8));
 		
 		//System.out.println(aAlu.floatTrueValue("00111111010000000", 8, 8));
 		//System.out.println(aAlu.floatTrueValue("00111111001100000", 8, 8));
-		//System.out.println(aAlu.integerTrueValue("111111110"));
+		//System.out.println(aAlu.integerTrueValue("00111110"));
 		//System.out.println(aAlu.integerMultiplication("0011", "1110",4));
 		//System.out.println(aAlu.floatMultiplication("00111111010000000", "00111111001100000", 8, 8));
 		//System.out.println(aAlu.adder("0111", "1101", '0', 8));

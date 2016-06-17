@@ -102,7 +102,7 @@ public class ALU {
 	 */
 	//未测试
  	public String integerRepresentation (String number, int length) {
-		// TODO YOUR CODE HERE.
+		
 		String ans = "";
 		String negativeAns = "";
 		if(number.charAt(0)=='-'){
@@ -147,7 +147,7 @@ public class ALU {
 	 */
  	//反规格化没有考虑
 	public String floatRepresentation (String number, int eLength, int sLength) {
-		// TODO YOUR CODE HERE.
+		
 		
 		String overInf="1",lowerInf="0",zero="0",NaN="0";
 		for (int i = 0; i < eLength; i++) {
@@ -723,6 +723,13 @@ public class ALU {
 		// TODO YOUR CODE HERE.
 		//n1,n2用于修改
 		String n1=operand1,n2=operand2;
+		for (int i = operand2.length(); i < length; i++) {
+			if(operand2.charAt(0)=='1'){
+				n2='1'+n2;
+			}else{
+				n2="0"+n2;
+			}
+		}
 		//补全n1的符号位
 		for (int i = operand1.length(); i < 2*length; i++) {
 			if(operand1.charAt(0)=='1'){
@@ -732,49 +739,41 @@ public class ALU {
 			}
 		}
 		//n2左移方便相加
-		for (int i = operand2.length(); i < (2*length)+1; i++) {
+		for (int i = length; i < (2*length); i++) {
 			n2=n2+'0';
 		}
 		
-		//最后一位决定是相加还是相减，最后一位由？决定？
 		String consult="",remainder="";
-		if(n1.charAt(0)!=n2.charAt(0)){
-			n1=adder(n1, n2, '0', 2*length).substring(1);
-			n1=n1+"1";
-		}else{
-			n1=integerSubtraction(n1, n2, 2*length).substring(1);
-			n1=n1+"0";
-		}
 		
-		for (int i = 0; i < length; i++) {
-			n1=leftShift(n1, 1);
-			if(n1.charAt(2*length-1)=='0'){
-				n1=adder(n1, n2, '0', 2*length).substring(1);
-			}else{
+		for (int i = 0; i < length+1; i++) {
+			if(n1.charAt(0)==n2.charAt(0)){
 				n1=integerSubtraction(n1, n2, 2*length).substring(1);
+			}else{
+				n1=adder(n1, n2, '0', 2*length).substring(1);
+			}
+			if(i==length){
+				remainder=n1.substring(0, length);
 			}
 			if(n1.charAt(0)==n2.charAt(0)){
-				n1=n1.substring(0, 2*length)+"1";
+				n1=(n1+"1").substring(1);
 			}else{
-				n1=n1.substring(0, 2*length)+"0";
+				n1=(n1+"0").substring(1);
+			}
+			if(i==length){
+				consult=n1.substring(length);
 			}
 		}
-		System.out.println(n1);
-		if(n1.charAt(0)==n2.charAt(0)){
-			remainder=n1.substring(0, length);
-		}else{
-			remainder=integerSubtraction(n1, n2, 2*length).substring(1, 1+length);
+		if(operand1.charAt(0)!=operand2.charAt(0)){
+			consult=oneAdder(consult).substring(1);
 		}
-		remainder=n1.substring(0, length);
+		if(remainder.charAt(0)!=operand1.charAt(0)){
+			if(operand1.charAt(0)!=operand2.charAt(0)){
+				remainder=integerSubtraction(remainder, operand2, length).substring(1);
+			}else{
+				remainder=adder(remainder, operand2, '0', length).substring(1);
+			}
+		}
 		
-		if(n1.charAt(0)!=operand1.charAt(0)){
-			if(n1.charAt(2*length)=='1'){
-				remainder=integerSubtraction(remainder, n2.substring(0,length), length).substring(1);
-			}else{
-				remainder=adder(remainder, n2.substring(0, length), '0', length).substring(1);
-			}
-		}
-		consult=oneAdder(n1.substring(1+length)).substring(1);
 		
 		return "0"+consult+remainder;
 	}
@@ -986,16 +985,8 @@ public class ALU {
 			one=one+"1";
 		}
 		
-		String string=integerSubtraction("0"+operand1.substring(1,1+eLength), "0"+one, 4+eLength).substring(4);
+		index=Integer.toBinaryString(Integer.parseInt(integerTrueValue("0"+operand1.substring(1,1+eLength)))+Integer.parseInt(integerTrueValue("0"+operand2.substring(1,1+eLength)))-127);
 		
-		index=adder("0"+string, "0"+operand2.substring(1, 1+eLength), '0', eLength+4).substring(4);
-		
-		if(index.charAt(0)=='1'){
-			over="1";
-		}else{
-			over="0";
-		}
-		index=index.substring(1);
 		//符号位
 		String integer="";
 		if(operand1.charAt(0)==operand2.charAt(0)){
@@ -1005,7 +996,7 @@ public class ALU {
 		}
 		//底数
 		String sNumber="";
-		sNumber=integerMultiplication("0"+operand1.substring(1+eLength), "0"+operand2.substring(1+eLength),2*(4+sLength)).substring(4,4+sLength);
+		sNumber=integerMultiplication("0"+operand1.substring(1+eLength), "0"+operand2.substring(1+eLength),2*sLength);
 		
 		//如果底数溢出，那么便指数加一
 		sNumber=sNumber.substring(1);
